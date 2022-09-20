@@ -100,7 +100,7 @@
                         $where[] = array('DK.supervisi', '=', $id_karyawan);
                     }
             }
-            else if($konteks=='dataDetail') $where[] = array('id', '=', $id_sos);
+            else if($konteks=='dataDetail') $where[] = array('DS.id', '=', $id_sos);
             //
             if($id_cabang!=null) $where[] = array('DK.id_cabang', '=', $id_cabang);
             if($id_departemen!=null) $where[] = array('DK.id_departemen', '=', $id_departemen);

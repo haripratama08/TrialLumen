@@ -55,17 +55,17 @@ use App\Models\Shift_m;
             $id = Absensi_m::getId($id_company, 'data_sos');
             $data_insert['id'] = $id;
             $insert = Sos_m::pengajuan_sos($data_insert);
-            // for($i=1;$i<=$image_count;$i++){
-            //     Sos_m::insert_file(
-            //         $id, 
-            //         Uploads_c::upload_file(
-            //             $request->input('image'.$i), 
-            //             "/sos/".env('NAME_APPLICATION')."/",
-            //             $id_company."/".date("Ym"),
-            //             $id_karyawan.date('YmdHis').$i.".jpg"
-            //         ), 
-            //         $id_company);
-            // }
+            for($i=1;$i<=$image_count;$i++){
+                Sos_m::insert_file(
+                    $id, 
+                    Uploads_c::upload_file(
+                        $request->input('image'.$i), 
+                        "/sos/".env('NAME_APPLICATION')."/",
+                        $id_company."/".date("Ym"),
+                        $id_karyawan.date('YmdHis').$i.".jpg"
+                    ), 
+                    $id_company);
+            }
             if($insert){
                 $response = array(
                     'success' => true, 
