@@ -799,6 +799,15 @@
                 case "data_sos":
                     return "id";
                     break;
+                case "data_izin":
+                    return "id_izin";
+                    break;
+                case "data_aktivitas":
+                    return "id_aktivitas";
+                    break;    
+                case "data_patroli":
+                    return "id_patroli";
+                    break;
                 default:
                     return "-";
             }

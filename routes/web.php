@@ -181,3 +181,11 @@ $router->group(['prefix'=>'sos'], function () use ($router) {
 });
 // END SOS
 
+
+// BEGIN 
+$router->group(['prefix'=>'patroli'], function () use ($router) {
+    $router->post('add', 'Patroli_c@add_patroli');
+    $router->get('data', 'Patroli_c@getDataPatroli');
+});
+// END SOS
+
