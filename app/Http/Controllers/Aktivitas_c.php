@@ -99,6 +99,7 @@
             $lat = $request->input('latitude');
             $long = $request->input('longitude');
             $image = $request->input('image');
+            $jenis = $request->input('jenis');
 
             $get_timezone = TimezoneMapper::latLngToTimezoneString($lat, $long);
             $timezone = new DateTimeZone($get_timezone);
@@ -111,13 +112,14 @@
 
             $data_insert = array(
                 'id_karyawan'   => $id_karyawan,
+                'jenis'     => $jenis,
                 'waktu'     => $jam_absen,
                 'lokasi'  => $request->input('lokasi_absen'),
                 'timezone'      => $get_timezone,
                 'gmt'           => $gmt,
                 'latitude'      => $lat,
                 'longitude'     => $long,
-                'keterangan'    => $request->input('keterangan'),
+                'keterangan'    => $keterangan,
                 'id_company'    => $id_company, 
                 'image'          => Uploads_c::upload_file(
                     $image,
