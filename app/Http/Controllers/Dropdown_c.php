@@ -39,4 +39,11 @@
         public function get_data_status(Request $request){
             return Dropdown_m::get_data_status($request->input('level_user'), $request->input('id_company'));
         }
+
+        public function get_chip(Request $request){
+            return Dropdown_m::get_chip(
+                $request->input('id_company') 
+            );
+        }
+
     }

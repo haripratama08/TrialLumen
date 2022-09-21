@@ -159,5 +159,30 @@
             }
             return response()->json($response,200); 
         }
+
+        public static function get_chip($id_company){
+            $default = 'all';
+            $listApprove = [
+                array(
+                    'id' => 'all',
+                    'label' => 'Semua',
+                    'is_selected' => true
+                ),
+                array(
+                    'id' => '0',
+                    'label' => 'Harian',
+                    'is_selected' => false
+                ),
+                array(
+                    'id' => '1',
+                    'label' => 'Bulanan',
+                    'is_selected' => false
+                )
+            ];
+            
+            $response = array('success' => true, 'message' => 'data chip berhasil ditemukan', 'chip_model' => $listApprove, 'default_value' => $default);
+            return response()->json($response,200);
+        }
+
     
     }

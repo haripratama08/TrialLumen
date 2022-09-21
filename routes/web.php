@@ -168,6 +168,7 @@ $router->get('/dropdown/cabang', 'Dropdown_c@get_data_cabang');
 $router->get('/dropdown/departemen', 'Dropdown_c@get_data_departemen');
 $router->get('/dropdown/pegawai', 'Dropdown_c@get_data_pegawai');
 $router->get('/dropdown/status', 'Dropdown_c@get_data_status');
+$router->get('/dropdown/chip', 'Dropdown_c@get_chip');
 // END DATA DROPDOWN
 
 // GET DATA FACE RECOGNITION

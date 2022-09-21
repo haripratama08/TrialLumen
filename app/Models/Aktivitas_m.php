@@ -130,9 +130,21 @@
             $month_year         = $data['month_year'];
             $range_tanggal_mulai    = $data['range_tanggal_mulai'];
             $range_tanggal_selesai  = $data['range_tanggal_selesai'];
+            $jenis  = $data['jenis'];
 
             $where = array();
             //FILTER
+            if($jenis != null){
+                if($jenis != 'all'){
+                    if($jenis == '0'){
+                        $valueJenis = 'harian';
+                    }else{
+                        $valueJenis = 'bulanan';
+                    }
+                    $where[] = array('da.jenis', '=', $valueJenis);
+                }
+            }
+            // if($jenis!=null) $where[] = array('da.jenis', '=', $jenis);
             if($id_karyawan_select!=null) $where[] = array('dk.id_karyawan', '=', $id_karyawan_select);
             if($id_cabang!=null) $where[] = array('dk.id_cabang', '=', $id_cabang);
             if($id_company!=null) $where[] = array('dk.id_company', '=', $id_company);

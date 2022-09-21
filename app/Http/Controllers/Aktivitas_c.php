@@ -87,6 +87,7 @@
                 "range_tanggal_mulai"     => $request->get('range_tanggal_mulai'),
                 "range_tanggal_selesai"   => $request->get('range_tanggal_selesai'),
                 "id_aktivitas"       => $request->get('id_aktivitas'),
+                "jenis"       => $request->get('jenis'),
             );
 
             return Aktivitas_m::getDataAktivitas($data);
