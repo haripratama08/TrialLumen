@@ -224,4 +224,14 @@
 
             return Absensi_m::dataAbsensi($data);
         }
+        
+        public function getBebasShift(Request $request){
+            $id_company = $request->get('id_company');
+            $id_cabang = $request->get('id_cabang');
+            $id_karyawan = $request->get('id_karyawan');
+            $id_departemen = $request->get('id_departemen');
+
+            return Absensi_m::getBebasPilihShift($id_karyawan,$id_cabang,$id_company,$id_departemen);
+        }
+
     }

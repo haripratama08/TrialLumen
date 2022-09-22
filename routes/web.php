@@ -60,7 +60,8 @@ $router->group(['prefix'=>'absensi'], function () use ($router) {
     $router->get('hari-ini', 'Absensi_c@DataAbsensiHariIni');
     $router->get('cek_absen', 'Absensi_c@cekAbsen');
     $router->post('tambah', 'Absensi_c@add_absensi');
-    $router->get('data', 'Absensi_c@dataAbsensi');     
+    $router->get('data', 'Absensi_c@dataAbsensi');   
+    $router->get('pilih-shift', 'Absensi_c@getBebasShift');  
 });
 // END ABSENSI
 

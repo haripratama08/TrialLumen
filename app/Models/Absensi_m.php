@@ -1178,6 +1178,122 @@
             else return false;
             //
         }
+
+        public static function getBebasPilihShift($id_karyawan,$id_cabang,$id_company,$id_departemen){
+            // $cekPengaturan = DB::table('p_jadwal_kerja')
+            //                    ->select('id_cabang')
+            //                    ->where('id_cabang','=',$id_cabang)
+            //                    ->where('id_company','=',$id_company)
+            //                    ->where('flag','=','0')
+            //                    ->count();
+            $tanggal = date('Y-m-d');
+            $jam_sekarang = date('Y-m-d H:i:s');
+            // $jam_sekarang = '2022-09-22 21:00:00';
+            $cekPengaturan = 1;
+
+            if ($cekPengaturan > 0) {
+                $flagPengaturan = true;
+
+                //REGULER
+
+                $day_now = date('N');
+                $jenisJadwal = 'reguler';
+                $jadwal_absensi = self::_getJadwalAbsensi($id_cabang, $id_company, $tanggal, $jenisJadwal, $id_karyawan, $day_now);
+                $reguler = $jadwal_absensi['jam_kerja'];
+                if (($tanggal.' '.$reguler['start_absensi_masuk'] <= $jam_sekarang) && ($tanggal.' '.$reguler['batas_absensi_pulang'] >= $jam_sekarang)) {
+                    $flagP = true;
+                }else{
+                    $flagP = false;
+                }
+                
+                $reguler = array('id_shift'   => $reguler['id_master_shift'],
+                    'kode_shift' => $reguler['kode_absensi'],
+                    'nama_shift' => $reguler['ket_kode'],
+                    'jam_masuk'  => $reguler['jam_masuk'],
+                    'jam_pulang' => $reguler['jam_pulang'],
+                    'libur'      => '0',
+                    'flag'       => true
+                );
+
+                //END REGULER
+
+                $dataShift = DB::table('master_shift')
+                           ->where('id_cabang','=',$id_cabang)
+                           ->where('id_company','=',$id_company);
+                // if (!empty($id_departemen)) 
+                //     $dataShift = $dataShift->where('id_departemen',$id_departemen);
+                
+               
+                
+
+                $dataShift = $dataShift->get();
+                if (count($dataShift) > 0) {
+                    $cek_shift = DB::table('data_shift_karyawan')
+                                ->where('id_karyawan', $id_karyawan)
+                                ->where('id_company', $id_company)
+                                ->where('tanggal', $tanggal)
+                                ->first();
+                    if($cek_shift != NULL){//ADA SHIFT
+                        //HARUSNYA TIDAK PERLU QUERY LG
+                        
+                        $shift_hari_ini = DB::table('master_shift')
+                                            ->select('id_master_shift as id_shift', 'kode_shift', 'nama_shift', 
+                                                'jam_masuk', 'jam_pulang', 'libur', 'start_absen_masuk', 'batas_absen_pulang')
+                                            ->where('id_master_shift', $cek_shift->id_master_shift)
+                                            ->where('id_company', $id_company)
+                                            ->first();
+
+                        if (($tanggal.' '.$shift_hari_ini->start_absen_masuk <= $jam_sekarang) && ($tanggal.' '.$shift_hari_ini->batas_absen_pulang >= $jam_sekarang)) {
+                            $shift_hari_ini->flag = true;
+                        }else{
+                            $shift_hari_ini->flag = false;
+                        }
+                        
+                        $default = $shift_hari_ini;
+                    }else{//REGULER
+                        $default = $reguler;
+                    }
+                    foreach ($dataShift as $rows) {
+                        if ($rows->flag_batas_absen_pulang == '1') {
+                            $cdate = date('Y-m-d', strtotime('+1 days', strtotime(strval($tanggal))));
+                        }else{
+                            $cdate = $tanggal;
+                        }
+                        if (($tanggal.' '.$rows->start_absen_masuk <= $jam_sekarang) && ($cdate.' '.$rows->batas_absen_pulang >= $jam_sekarang)) {
+                            $flagP = true;
+                        }else{
+                            $flagP = false;
+                        }
+                        if ($rows->libur == '1') {
+                            $flagP = true;
+                        }
+                        $data[] = array('id_shift'   => $rows->id_master_shift,
+                                        'kode_shift' => $rows->kode_shift,
+                                        'nama_shift' => $rows->nama_shift,
+                                        'jam_masuk'  => $rows->jam_masuk,
+                                        'jam_pulang' => $rows->jam_pulang,
+                                        'libur'      => $rows->libur,
+                                        'flag'       => $flagP
+                                    );
+                    }
+                    
+                    // array_push($data,)
+                    
+                    array_unshift($data, $reguler);
+                    $result = array('flag_pengaturan' => $flagPengaturan, 'message' => 'Ada shift', 'default'=>$default,'data_shift' => $data);
+                }else{
+                    $result = array('flag_pengaturan' => false, 'message' => 'Pengaturan shift belum dibuat oleh admin', 'default' => null,'data_shift' => []);
+                }
+                
+            }else{
+                $flagPengaturan = false;
+                $result = array('flag_pengaturan' => $flagPengaturan, 'message' => 'Anda tidak diatur untuk pilih shift secara mandiri oleh admin', 'data_shift' => []);
+            }
+
+            $json = response()->json($result,200);
+            return $json;
+        }
+
     }
 
  
