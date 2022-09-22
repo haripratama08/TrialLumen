@@ -75,6 +75,7 @@
             $tgl_absensi = $request->input('tgl_absensi');
             $id_master_shift = $request->input('id_master_shift'); //CASE UNTUK JIKA ADA YG INJECT
             $durasi_istirahat = $request->input('durasi_istirahat');
+            $ganti_jadwal = $request->input('ganti_jadwal');
 
             $get_timezone = TimezoneMapper::latLngToTimezoneString($lat, $long);
             $timezone = new DateTimeZone($get_timezone);
@@ -117,6 +118,7 @@
                                 'jam_kerja' => $jam_masuk_kerja,
                                 'terlambat' => $terlambat,
                                 'ket_kode'   => $ket_kode,
+                                'ganti_jadwal'   => $ganti_jadwal,
                                 'kode_absen' => $kode_absen);
                             
             }else if($jenis_absen == 'absen_pulang'){
