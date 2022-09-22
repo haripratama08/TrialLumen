@@ -226,12 +226,22 @@
         }
         
         public function getBebasShift(Request $request){
+            $lat = $request->get('latitude');
+            $long = $request->get('longitude');
             $id_company = $request->get('id_company');
             $id_cabang = $request->get('id_cabang');
             $id_karyawan = $request->get('id_karyawan');
             $id_departemen = $request->get('id_departemen');
-
-            return Absensi_m::getBebasPilihShift($id_karyawan,$id_cabang,$id_company,$id_departemen);
+            $get_timezone = TimezoneMapper::latLngToTimezoneString($lat, $long);
+            $timezone = new DateTimeZone($get_timezone);
+            $date = new DateTime();
+            $date->setTimeZone($timezone);
+            
+            $current_date = $date->format('Y-m-d');
+            $current_time = $date->format('Y-m-d H:i:s');
+            $day_now = $date->format('N');
+            $gmt = $date->format('P');
+            return Absensi_m::getBebasPilihShift($current_date, $current_time, $id_karyawan,$id_cabang,$id_company,$id_departemen);
         }
 
     }

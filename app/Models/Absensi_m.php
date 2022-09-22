@@ -244,8 +244,7 @@
         }
 
         private static function _getJadwalAbsensi($id_cabang = null, $id_company = null, $tanggal = null, $jenisJadwal = null, $id_karyawan = null,$dayNow = null ){
-            // DB::enableQue÷ryLog();
-            // echo $tanggal;exit;
+            // DB::enableQueryLog();
             if($jenisJadwal == 'reguler'){
                 $jenis_jam_kerja= 'reguler';
                 $jam_kerja = DB::table('jam_kerja')
@@ -1179,18 +1178,16 @@
             //
         }
 
-        public static function getBebasPilihShift($id_karyawan,$id_cabang,$id_company,$id_departemen){
+        public static function getBebasPilihShift($tanggal, $jam_sekarang, $id_karyawan,$id_cabang,$id_company,$id_departemen){
             // $cekPengaturan = DB::table('p_jadwal_kerja')
             //                    ->select('id_cabang')
             //                    ->where('id_cabang','=',$id_cabang)
             //                    ->where('id_company','=',$id_company)
             //                    ->where('flag','=','0')
             //                    ->count();
-            $tanggal = date('Y-m-d');
-            $jam_sekarang = date('Y-m-d H:i:s');
             // $jam_sekarang = '2022-09-22 21:00:00';
             $cekPengaturan = 1;
-
+            // echo $tanggal;exit;
             if ($cekPengaturan > 0) {
                 $flagPengaturan = true;
 
