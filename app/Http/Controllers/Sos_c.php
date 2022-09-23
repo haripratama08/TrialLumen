@@ -7,7 +7,8 @@
 use App\Models\Absensi_m;
 use App\Models\Shift_m;
     use App\Models\Sos_m;
-    use DateTime;
+use App\Models\User_m;
+use DateTime;
     use DateTimeZone;
 
     class Sos_c extends Controller{
@@ -52,6 +53,7 @@ use App\Models\Shift_m;
             $data_insert['id_karyawan'] = $id_karyawan;
             $data_insert['keterangan'] = $keterangan;
             $data_insert['id_company'] = $id_company;
+            $data_insert['tanggal'] = date('Y-m-d');
             $id = Absensi_m::getId($id_company, 'data_sos');
             $data_insert['id'] = $id;
             $insert = Sos_m::pengajuan_sos($data_insert);
@@ -67,6 +69,18 @@ use App\Models\Shift_m;
                     $id_company);
             }
             if($insert){
+                //LIHAT LEVEL NYA
+                //3 => 7 => 2 => 5 => 4
+                // 2 => 5 => 4
+                $list_penerima = [];
+                if($level_user == '3'){
+                    $get_spv =  User_m::get_data_user_by_id($id_karyawan);
+                    $id_spv = $get_spv->supervisi;
+                    if($id_spv != '' || $id_spv != NULL){
+                        array_push($list_penerima, $id_spv);
+                    }
+                    // $id_departemen = $
+                }
                 $response = array(
                     'success' => true, 
                     'message' => 'SOS berhasil terkirim',

@@ -785,6 +785,10 @@
             ->update($data);
         }
 
+        // public static function getKepalaJabatan($id){
+        //     $karyawan = DB::table('d')
+        // }
+
 
 
 
