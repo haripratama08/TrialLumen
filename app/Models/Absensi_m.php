@@ -75,9 +75,18 @@
             // echo $current_time;exit;
             $cek_absensi_terakhir = self::_cekAbsensiTerakhir($id_karyawan, $id_company, $current_time);
             // var_dump($cek_absensi_terakhir);exit;
+            $ganti_jadwal = $cek_absensi_terakhir['ganti_jadwal'];
+            $kode_absen = $cek_absensi_terakhir['kode_absen'];
+            if($ganti_jadwal == '0'){
+                $isGantiJadwal = false;
+            }else{
+                $isGantiJadwal = true;
+            }
             if($cek_absensi_terakhir['status']){//TRUE LEWAT HARI
                 $tgl_absensi =  $cek_absensi_terakhir['tgl_absen'];
                 $absen_pulang =  $cek_absensi_terakhir['absen_pulang'];
+                
+                
                 // DB::enableQueryLog();
                 $jadwal_hari_ini = DB::table('data_shift_karyawan as dsk')
                                     ->selectRaw('dsk.id_shift_karyawan')
@@ -95,9 +104,10 @@
                     $jadwal_absensi = self::_getJadwalAbsensi($id_cabang, $id_company, $current_date, $jenisJadwal, $id_karyawan, $day_now);
                     $data_absensi = self::_dataAbsensi($id_karyawan, $id_company, $current_date);
                     $status = $jadwal_absensi['status'];
-                }else{
+                }else{//BELUM PULANG
                     # JADWAL SHIFT KEMARIN
-                    $jadwal_absensi = self::_getJadwalAbsensi($id_cabang, $id_company, $tgl_absensi, $jenisJadwal, $id_karyawan, $day_now);
+                    
+                    $jadwal_absensi = self::_getJadwalAbsensi($id_cabang, $id_company, $tgl_absensi, $jenisJadwal, $id_karyawan, $day_now, $isGantiJadwal, $kode_absen);
                     $data_absensi = self::_dataAbsensi($id_karyawan, $id_company, $tgl_absensi); 
                     $status = $jadwal_absensi['status'];
                 }
@@ -109,7 +119,7 @@
 
                     
                     # JADWAL ABSENSI
-                    $jadwal_absensi = self::_getJadwalAbsensi($id_cabang, $id_company, $current_date, $jenis_jam_kerja, $id_karyawan, $day_now);
+                    $jadwal_absensi = self::_getJadwalAbsensi($id_cabang, $id_company, $current_date, $jenis_jam_kerja, $id_karyawan, $day_now, $isGantiJadwal, $kode_absen);
                     // var_dump($jadwal_absensi);
                     
                 
@@ -243,42 +253,76 @@
                 return $result;
         }
 
-        private static function _getJadwalAbsensi($id_cabang = null, $id_company = null, $tanggal = null, $jenisJadwal = null, $id_karyawan = null,$dayNow = null ){
+        private static function _getJadwalAbsensi($id_cabang = null, $id_company = null, $tanggal = null, 
+            $jenisJadwal = null, $id_karyawan = null,$dayNow = null, $ganti_jadwal = false, $kode_absen = 'H'){
             // DB::enableQueryLog();
-            if($jenisJadwal == 'reguler'){
-                $jenis_jam_kerja= 'reguler';
-                $jam_kerja = DB::table('jam_kerja')
-                                ->selectRaw('"0" AS id_master_shift, CURDATE() AS tanggal,masuk as jam_masuk, pulang as jam_pulang, start_absen_masuk, batas_absen_pulang,"" as kode_shift, "reguler" as nama_shift, "0" as flag_batas_absen_pulang')
-                                ->where('hari', $dayNow)
-                                ->where('id_cabang', $id_cabang)
-                                ->where('id_company', $id_company)
-                                ->first();
+            if(!$ganti_jadwal){//TIDAK GANTI JADWAL / DEFAULT
+                if($jenisJadwal == 'reguler'){
+                    $jenis_jam_kerja= 'reguler';
+                    $jam_kerja = DB::table('jam_kerja')
+                                    ->selectRaw('"0" AS id_master_shift, CURDATE() AS tanggal,masuk as jam_masuk, pulang as jam_pulang, start_absen_masuk, batas_absen_pulang,"" as kode_shift, "reguler" as nama_shift, "0" as flag_batas_absen_pulang')
+                                    ->where('hari', $dayNow)
+                                    ->where('id_cabang', $id_cabang)
+                                    ->where('id_company', $id_company)
+                                    ->first();
+                }else{
+                    $jenis_jam_kerja = 'shift';
+                    $jam_kerja = DB::table('data_shift_karyawan as dsk')
+                                    ->selectRaw('ms.id_master_shift, dsk.tanggal, ms.jam_masuk, ms.jam_pulang, ms.start_absen_masuk, ms.batas_absen_pulang, ms.kode_shift, ms.nama_shift, ms.libur, ms.flag_batas_absen_pulang')
+                                    ->join('master_shift as ms', 'ms.id_master_shift' , '=', 'dsk.id_master_shift')
+                                    ->where('dsk.id_karyawan', $id_karyawan)
+                                    ->where('dsk.tanggal', $tanggal)
+                                    ->where('ms.id_cabang', $id_cabang)
+                                    ->where('dsk.id_company', $id_company)
+                                    ->first();
+                }
             }else{
-                $jenis_jam_kerja = 'shift';
-                $jam_kerja = DB::table('data_shift_karyawan as dsk')
-                                ->selectRaw('ms.id_master_shift, dsk.tanggal, ms.jam_masuk, ms.jam_pulang, ms.start_absen_masuk, ms.batas_absen_pulang, ms.kode_shift, ms.nama_shift, ms.libur, ms.flag_batas_absen_pulang')
-                                ->join('master_shift as ms', 'ms.id_master_shift' , '=', 'dsk.id_master_shift')
-                                ->where('dsk.id_karyawan', $id_karyawan)
-                                ->where('dsk.tanggal', $tanggal)
-                                ->where('ms.id_cabang', $id_cabang)
-                                ->where('dsk.id_company', $id_company)
-                                ->first();
+                if($kode_absen == 'H'){
+                    $jenis_jam_kerja= 'reguler';
+                    $jam_kerja = DB::table('jam_kerja')
+                                    ->selectRaw('"0" AS id_master_shift, CURDATE() AS tanggal,masuk as jam_masuk, pulang as jam_pulang, start_absen_masuk, batas_absen_pulang,"" as kode_shift, "reguler" as nama_shift, "0" as flag_batas_absen_pulang')
+                                    ->where('hari', $dayNow)
+                                    ->where('id_cabang', $id_cabang)
+                                    ->where('id_company', $id_company)
+                                    ->first();
+                }else{
+                    $jenis_jam_kerja = 'shift';
+                    $jam_kerja = DB::table('master_shift as ms')
+                                    ->selectRaw('ms.id_master_shift, CURDATE() AS tanggal, ms.jam_masuk, ms.jam_pulang, ms.start_absen_masuk, ms.batas_absen_pulang, ms.kode_shift, ms.nama_shift, ms.libur, ms.flag_batas_absen_pulang')
+                                    ->where('ms.kode_shift', $kode_absen)
+                                    ->where('ms.id_company', $id_company)
+                                    ->first();
+                }
             }
             // print_r(DB::getQueryLog());exit;
             if($jam_kerja == null){ # JIKA JAM KERJA BELUM DI SETTING
                 $response['status'] = false; 
                 $response['message'] = "Jam kerja belum diatur oleh admin"; 
             }else{
-                if($jenisJadwal == 'reguler'){
-                    $keterangan     = 'Reguler';
-                    $kode_absensi   = 'H';
-                    $ket_kode       = 'Reguler';
+                if(!$ganti_jadwal){
+                    if($jenisJadwal == 'reguler'){
+                        $keterangan     = 'Reguler';
+                        $kode_absensi   = 'H';
+                        $ket_kode       = 'Reguler';
+                    }else{
+                        $keterangan     = $jam_kerja->kode_shift." - ".$jam_kerja->nama_shift;
+                        $kode_absensi   = $jam_kerja->kode_shift;
+                        $ket_kode       = $jam_kerja->nama_shift;
+                        $libur          = $jam_kerja->libur;
+                    }
                 }else{
-                    $keterangan     = $jam_kerja->kode_shift." - ".$jam_kerja->nama_shift;
-                    $kode_absensi   = $jam_kerja->kode_shift;
-                    $ket_kode       = $jam_kerja->nama_shift;
-                    $libur          = $jam_kerja->libur;
+                    if($kode_absen == 'H'){
+                        $keterangan     = 'Reguler';
+                        $kode_absensi   = 'H';
+                        $ket_kode       = 'Reguler';
+                    }else{
+                        $keterangan     = $jam_kerja->kode_shift." - ".$jam_kerja->nama_shift;
+                        $kode_absensi   = $jam_kerja->kode_shift;
+                        $ket_kode       = $jam_kerja->nama_shift;
+                        $libur          = $jam_kerja->libur;
+                    }
                 }
+                
                 $data_jam_kerja = array(
                     'tanggal'       => DateFormat::format($tanggal,"N d M Y"),
                     'kode_absensi'  => $kode_absensi,
@@ -529,7 +573,8 @@
                                                 am.keterangan,
                                                 im.jam_absen AS ist_mulai,
                                                 ise.jam_absen AS ist_selesai,
-                                                ap.jam_absen AS jam_pulang
+                                                ap.jam_absen AS jam_pulang,
+                                                am.ganti_jadwal
                                         FROM absensi_masuk AS am
                                         LEFT JOIN istirahat_mulai AS im ON im.id_karyawan =  am.id_karyawan AND im.tgl_absen = '$current_date'
                                         LEFT JOIN istirahat_selesai AS ise ON ise.id_karyawan = am.id_karyawan AND ise.tgl_absen = '$current_date'
@@ -541,6 +586,7 @@
                 
                 $jadwal = array('jam_masuk' => ((isset($select->jam_absen) && !empty($select->jam_absen))?date_format(date_create($select->jam_absen), 'H:i'):""),
                 'jam_pulang' => ((isset($select->jam_pulang) && !empty($select->jam_pulang))?date_format(date_create($select->jam_pulang), 'H:i'):""),
+                'ganti_jadwal' => ((isset($select->ganti_jadwal) && !empty($select->ganti_jadwal))?$select->ganti_jadwal:""),
                 'istirahat_mulai' => ((isset($select->ist_mulai) && !empty($select->ist_mulai))?date_format(date_create($select->ist_mulai), 'H:i'):""),
                 'istirahat_selesai' => ((isset($select->ist_selesai) && !empty($select->ist_selesai))?date_format(date_create($select->ist_selesai), 'H:i'):""));
                 return $jadwal; 
@@ -662,7 +708,7 @@
             $max_tanggal = $cek_max->max_tanggal;
             // echo $max_tanggal;exit;
             $cek_absensi_terakhir = DB::table('absensi_masuk as am')
-                                    ->selectRaw('am.id_absensi_masuk, am.jam_absen, am.kode_absen, dk.id_cabang, am.tgl_absen, ap.id_absensi_pulang, am.jenis_absen')
+                                    ->selectRaw('am.id_absensi_masuk, am.jam_absen, am.kode_absen, dk.id_cabang, am.tgl_absen, ap.id_absensi_pulang, am.jenis_absen, am.ganti_jadwal')
                                     ->join('data_karyawan as dk', 'dk.id_karyawan', '=', 'am.id_karyawan')
                                     ->leftJoin('absensi_pulang as ap', 'ap.id_masuk', '=', 'am.id_absensi_masuk')
                                     ->whereRaw('am.id_karyawan = ? AND am.id_company = ? ',[$id_karyawan, $id_company])
@@ -670,11 +716,17 @@
                                     ->first();
             // var_dump($cek_absensi_terakhir);exit;
             // dd(DB::getQueryLog());exi÷t;
-            if($cek_absensi_terakhir!=null && $cek_absensi_terakhir->jenis_absen == 'shift'){//ADA ABSEN SHIFT
-                // echo $current_time;exit;
+            $ganti = $cek_absensi_terakhir != null?$cek_absensi_terakhir->ganti_jadwal:'0';
+            if($cek_absensi_terakhir != null){
                 $kode_shift = $cek_absensi_terakhir->kode_absen;
                 $kode_shift = explode(',', $kode_shift);
                 $kode_shift = $kode_shift[0];
+            }else{
+                $kode_shift = 'H';
+            }
+            if($cek_absensi_terakhir!=null && $cek_absensi_terakhir->jenis_absen == 'shift'){//ADA ABSEN SHIFT
+                // echo $current_time;exit;
+                
                 $id_cabang = $cek_absensi_terakhir->id_cabang;
                 if($current_time == '0000-00-00'){
                     $absensi_pulang = $current_time;
@@ -714,10 +766,13 @@
                     }else{
                         $tgl_absen_pulang = date_format(date_create($absensi_pulang), "Y-m-d");
                     }
-
+                
                 if($cek_lewat_hari > 0){# JIKA LEWAT HARI
                     // echo 'adg';exit;
                     $id_absensi_pulang = $cek_absensi_terakhir->id_absensi_pulang;
+                    
+                    $data['ganti_jadwal'] = $ganti;
+                    $data['kode_absen'] = $kode_shift;
                     $data['status'] = true;
                     $data['absen_pulang'] = ($id_absensi_pulang == null)?false:true;
                     $data['tgl_absen'] = $tgl_absen_pulang;
@@ -725,10 +780,14 @@
 
                     // $data['status'] = false;
                 }else{
+                    $data['ganti_jadwal'] = $ganti;
                     $data['status'] = false;
+                    $data['kode_absen'] = $kode_shift;
                 }
             }else{
+                $data['ganti_jadwal'] = $ganti;
                 $data['status'] = false;
+                $data['kode_absen'] = $kode_shift;
             }
             return $data;
         }     
