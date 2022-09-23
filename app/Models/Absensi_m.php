@@ -76,7 +76,7 @@
             $cek_absensi_terakhir = self::_cekAbsensiTerakhir($id_karyawan, $id_company, $current_time);
             $ganti_jadwal = $cek_absensi_terakhir['ganti_jadwal'];
             $kode_absen = $cek_absensi_terakhir['kode_absen'];
-            
+            // var_dump($cek_absensi_terakhir);exit;
             if($ganti_jadwal == '0'){
                 $isGantiJadwal = false;
             }else{
@@ -766,20 +766,23 @@
                     $data['ganti_jadwal'] = $ganti;
                     $data['kode_absen'] = $kode_shift;
                     $data['status'] = true;
-                    $data['absen_pulang'] = ($id_absensi_pulang == null)?false:true;
+                    $data['absen_pulang'] = $ganti;
                     $data['tgl_absen'] = $tgl_absen_pulang;
+                    $data['keterangan'] = '0';
                     // var_dump($data);exit;
 
                     // $data['status'] = false;
                 }else{
-                    $data['ganti_jadwal'] = ($id_absensi_pulang == null)?false:$ganti;
+                    $data['ganti_jadwal'] = $ganti;
                     $data['status'] = false;
                     $data['kode_absen'] = $kode_shift;
+                    $data['keterangan'] = '1';
                 }
             }else{
-                $data['ganti_jadwal'] = ($id_absensi_pulang == null)?false:$ganti;
+                $data['ganti_jadwal'] = $ganti;
                 $data['status'] = false;
                 $data['kode_absen'] = 'H';
+                $data['keterangan'] = '2';
             }
             return $data;
         }     
