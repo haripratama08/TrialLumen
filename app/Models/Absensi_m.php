@@ -74,9 +74,9 @@
             }
             // echo $current_time;exit;
             $cek_absensi_terakhir = self::_cekAbsensiTerakhir($id_karyawan, $id_company, $current_time);
-            // var_dump($cek_absensi_terakhir);exit;
             $ganti_jadwal = $cek_absensi_terakhir['ganti_jadwal'];
             $kode_absen = $cek_absensi_terakhir['kode_absen'];
+            
             if($ganti_jadwal == '0'){
                 $isGantiJadwal = false;
             }else{
@@ -106,7 +106,6 @@
                     $status = $jadwal_absensi['status'];
                 }else{//BELUM PULANG
                     # JADWAL SHIFT KEMARIN
-                    
                     $jadwal_absensi = self::_getJadwalAbsensi($id_cabang, $id_company, $tgl_absensi, $jenisJadwal, $id_karyawan, $day_now, $isGantiJadwal, $kode_absen);
                     $data_absensi = self::_dataAbsensi($id_karyawan, $id_company, $tgl_absensi); 
                     $status = $jadwal_absensi['status'];
@@ -116,8 +115,6 @@
                 $cek_jadwal_absensi = self::_cekJadwalAbsensi($id_cabang, $id_company, $current_date, $id_karyawan, $day_now);
                 $jenis_jam_kerja = $cek_jadwal_absensi['jenis_jam_kerja'];
                 if(in_array($jenis_jam_kerja,array('reguler','shift'))){
-
-                    
                     # JADWAL ABSENSI
                     $jadwal_absensi = self::_getJadwalAbsensi($id_cabang, $id_company, $current_date, $jenis_jam_kerja, $id_karyawan, $day_now, $isGantiJadwal, $kode_absen);
                     // var_dump($jadwal_absensi);
@@ -717,16 +714,12 @@
             // var_dump($cek_absensi_terakhir);exit;
             // dd(DB::getQueryLog());exi÷t;
             $ganti = $cek_absensi_terakhir != null?$cek_absensi_terakhir->ganti_jadwal:'0';
-            if($cek_absensi_terakhir != null){
+            $id_absensi_pulang = $cek_absensi_terakhir->id_absensi_pulang;
+            if($cek_absensi_terakhir!=null && $cek_absensi_terakhir->jenis_absen == 'shift'){//ADA ABSEN SHIFT
+                // echo $current_time;exit;
                 $kode_shift = $cek_absensi_terakhir->kode_absen;
                 $kode_shift = explode(',', $kode_shift);
                 $kode_shift = $kode_shift[0];
-            }else{
-                $kode_shift = 'H';
-            }
-            if($cek_absensi_terakhir!=null && $cek_absensi_terakhir->jenis_absen == 'shift'){//ADA ABSEN SHIFT
-                // echo $current_time;exit;
-                
                 $id_cabang = $cek_absensi_terakhir->id_cabang;
                 if($current_time == '0000-00-00'){
                     $absensi_pulang = $current_time;
@@ -767,9 +760,8 @@
                         $tgl_absen_pulang = date_format(date_create($absensi_pulang), "Y-m-d");
                     }
                 
+                
                 if($cek_lewat_hari > 0){# JIKA LEWAT HARI
-                    // echo 'adg';exit;
-                    $id_absensi_pulang = $cek_absensi_terakhir->id_absensi_pulang;
                     
                     $data['ganti_jadwal'] = $ganti;
                     $data['kode_absen'] = $kode_shift;
@@ -780,14 +772,14 @@
 
                     // $data['status'] = false;
                 }else{
-                    $data['ganti_jadwal'] = $ganti;
+                    $data['ganti_jadwal'] = ($id_absensi_pulang == null)?false:$ganti;
                     $data['status'] = false;
                     $data['kode_absen'] = $kode_shift;
                 }
             }else{
-                $data['ganti_jadwal'] = $ganti;
+                $data['ganti_jadwal'] = ($id_absensi_pulang == null)?false:$ganti;
                 $data['status'] = false;
-                $data['kode_absen'] = $kode_shift;
+                $data['kode_absen'] = 'H';
             }
             return $data;
         }     
