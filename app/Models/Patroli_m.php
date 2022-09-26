@@ -146,4 +146,27 @@ use Illuminate\Database\Eloquent\Model;
             }
             return $data;
         }
+
+        public static function getListKartu($id_karyawan, $id_company){
+            $list_kartu = DB::table('data_rfid')
+                        ->select('mac_address')
+                        ->where('id_company', $id_company)
+                        ->get();
+            
+            if(count($list_kartu) > 0){
+                $respon = array(
+                    'success' => true,
+                    'message' => 'Ada kartunya',
+                    'list_mac' => $list_kartu,
+                );
+            }else{
+                $respon = array(
+                    'success' => false,
+                    'message' => 'Tidak ada kartunya',
+                    'list_mac' => [],
+                );
+            }
+            return response()->json($respon,200);
+        }
+
     }

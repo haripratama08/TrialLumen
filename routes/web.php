@@ -188,6 +188,7 @@ $router->group(['prefix'=>'sos'], function () use ($router) {
 $router->group(['prefix'=>'patroli'], function () use ($router) {
     $router->post('add', 'Patroli_c@add_patroli');
     $router->get('data', 'Patroli_c@getDataPatroli');
+    $router->get('list_kartu', 'Patroli_c@list_kartu');
 });
 // END SOS
 

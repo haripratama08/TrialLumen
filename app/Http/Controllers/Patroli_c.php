@@ -75,4 +75,10 @@
             }
             return response()->json($response,200);
         }
+
+        public function list_kartu(Request $request){
+            $id_karyawan    = $request->get('id_karyawan');
+            $id_company     = $request->get('id_company');
+            return Patroli_m::getListKartu($id_karyawan, $id_company);
+        }
     }
