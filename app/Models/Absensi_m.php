@@ -1329,7 +1329,15 @@
                     }
                     
                     // array_push($data,)
-                    
+                    $hide_menu = array('id_shift'   => '100',
+                        'kode_shift' => '',
+                        'nama_shift' => '',
+                        'jam_masuk'  => '00:00:00',
+                        'jam_pulang' => '00:00:00',
+                        'libur'      => '0',
+                        'flag'       => true
+                    );
+                    array_unshift($data, $hide_menu);
                     array_unshift($data, $reguler);
                     $result = array('flag_pengaturan' => $flagPengaturan, 'message' => 'Ada shift', 'default'=>$default,'data_shift' => $data);
                 }else{
