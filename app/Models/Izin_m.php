@@ -662,8 +662,8 @@
                'di.jenis_izin',
                 'md.nama as nama_departemen', 'dk.id_jabatan', 'mj.kode_jabatan', 'mj.nama as nama_jabatan')
             ->join('data_karyawan as dk', 'dk.id_karyawan', '=', 'di.id_karyawan')
-            ->join('master_cabang as mc', 'mc.id_cabang', 'dk.id_cabang')
-            ->join('master_departemen as md', 'md.id_departemen', '=', 'di.id_departemen')
+            ->leftJoin('master_cabang as mc', 'mc.id_cabang', 'dk.id_cabang')
+            ->leftJoin('master_departemen as md', 'md.id_departemen', '=', 'di.id_departemen')
             ->join('master_jabatan as mj', 'mj.id_jabatan', '=', 'dk.id_jabatan')
             ->where('id_izin', strval($id_izin))->first();
 
@@ -671,11 +671,11 @@
             $nik                =   $data_izin->nik;
             $nama_karyawan      =   $data_izin->nama_lengkap;
             $id_cabang          =   $data_izin->id_cabang;
-            $kode_cabang        =   $data_izin->kode_cabang;
-            $nama_cabang        =   $data_izin->nama_cabang;
-            $id_departemen      =   $data_izin->id_departemen;
-            $kode_departemen    =   $data_izin->kode_departemen;
-            $nama_departemen    =   $data_izin->nama_departemen;
+            $kode_cabang        =   $data_izin->kode_cabang??'';
+            $nama_cabang        =   $data_izin->nama_cabang??'';
+            $id_departemen      =   $data_izin->id_departemen??'';
+            $kode_departemen    =   $data_izin->kode_departemen??'';
+            $nama_departemen    =   $data_izin->nama_departemen??'';
             $id_jabatan         =   $data_izin->id_jabatan;
             $kode_jabatan       =   $data_izin->kode_jabatan;
             $nama_jabatan       =   $data_izin->nama_jabatan;
