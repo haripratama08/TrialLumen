@@ -767,6 +767,38 @@
             ->select('usergroup.urutan', 'data_karyawan.supervisi')->where('data_karyawan.id_karyawan', $id_karyawan)->first();
             return $data;
         }
+        public static function get_hod($id_departemen){
+            $data = DB::table('data_karyawan')
+            ->join('users', 'users.id_karyawan', '=', 'data_karyawan.id_karyawan')
+            ->join('master_jabatan', 'master_jabatan.id_jabatan', '=', 'data_karyawan.id_jabatan')
+            ->select('data_karyawan.id_karyawan','users.token_fcm')
+            ->where('data_karyawan.id_departemen', $id_departemen)
+            ->where('master_jabatan.level_user', '2')
+            ->first();
+            return $data;
+        }
+
+        public static function get_kacab($id_cabang){
+            $data = DB::table('data_karyawan')
+            ->join('users', 'users.id_karyawan', '=', 'data_karyawan.id_karyawan')
+            ->join('master_jabatan', 'master_jabatan.id_jabatan', '=', 'data_karyawan.id_jabatan')
+            ->select('data_karyawan.id_karyawan', 'users.token_fcm')
+            ->where('data_karyawan.id_cabang', $id_cabang)
+            ->where('master_jabatan.level_user', '5')
+            ->first();
+            return $data;
+        }
+
+        public static function get_direksi_admin(){
+            $data = DB::table('data_karyawan')
+            ->join('users', 'users.id_karyawan', '=', 'data_karyawan.id_karyawan')
+            ->join('master_jabatan', 'master_jabatan.id_jabatan', '=', 'data_karyawan.id_jabatan')
+            ->select('data_karyawan.id_karyawan', 'users.token_fcm')
+            ->where('master_jabatan.level_user', '4')
+            ->orWhere('master_jabatan.level_user', '1')
+            ->get();
+            return $data;
+        }
 
         public static function get_master_jabatan($level_approval, $id_company, $id_departemen){
             $data = DB::table('master_jabatan as mj')

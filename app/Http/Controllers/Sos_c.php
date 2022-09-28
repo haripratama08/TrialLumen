@@ -77,9 +77,59 @@ use DateTime;
                     $get_spv =  User_m::get_data_user_by_id($id_karyawan);
                     $id_spv = $get_spv->supervisi;
                     if($id_spv != '' || $id_spv != NULL){
-                        array_push($list_penerima, $id_spv);
+                        $token_spv = User_m::get_data_karyawan($id_spv)->token_fcm;
+                        if($token_spv != '' || $token_spv != NULL){
+                            array_push($list_penerima, $token_spv);
+                        }
                     }
-                    // $id_departemen = $
+                    $get_hod = User_m::get_hod($id_departemen);
+                    if($get_hod != NULL){
+                        if($get_hod->token_fcm != '' || $get_hod->token_fcm != NULL){
+                            array_push($list_penerima, $get_hod->token_fcm);
+                        }
+                    }
+
+                    $get_kacab = User_m::get_kacab($id_cabang);
+                    if($get_kacab != NULL){
+                        if($get_kacab->token_fcm != '' || $get_kacab->token_fcm != NULL){
+                            array_push($list_penerima, $get_kacab->token_fcm);
+                        }
+                    }
+                    $get_direksi_admin = User_m::get_direksi_admin();
+                    if(count($get_direksi_admin)>0){
+                        foreach($get_direksi_admin as $row){
+                            if($row->token_fcm != '' || $row->token_fcm != NULL){
+                                array_push($list_penerima, $row->token_fcm);
+                            }
+                        }
+                    }
+                }elseif($level_user == '2'){
+                    $get_kacab = User_m::get_kacab($id_cabang);
+                    if($get_kacab != NULL){
+                        if($get_kacab->token_fcm != '' || $get_kacab->token_fcm != NULL){
+                            array_push($list_penerima, $get_kacab->id_karyawan);
+                        }
+                    }
+                    $get_direksi_admin = User_m::get_direksi_admin();
+                    if(count($get_direksi_admin)>0){
+                        foreach($get_direksi_admin as $row){
+                            if($row->token_fcm != '' || $row->token_fcm != NULL){
+                                array_push($list_penerima, $row->token_fcm);
+                            }
+                        }
+                    }
+                }else{
+                    $get_direksi_admin = User_m::get_direksi_admin();
+                    if(count($get_direksi_admin)>0){
+                        foreach($get_direksi_admin as $row){
+                            if($row->token_fcm != '' || $row->token_fcm != NULL){
+                                array_push($list_penerima, $row->token_fcm);
+                            }
+                        }
+                    }
+                }
+                foreach($list_penerima as $row){
+                    Notifikasi_c::send_fcm($row, 'NOTIFIKASI SOS', User_m::get_data_karyawan($id_karyawan)->nama_lengkap.' melakukan SOS', '/detail_sos_', 0);
                 }
                 $response = array(
                     'success' => true, 
