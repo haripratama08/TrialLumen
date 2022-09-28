@@ -773,7 +773,7 @@
 
                     // $data['status'] = false;
                 }else{
-                    $data['ganti_jadwal'] = '0';
+                    $data['ganti_jadwal'] = $ganti;
                     $data['status'] = false;
                     $data['kode_absen'] = $kode_shift;
                     $data['keterangan'] = '1';
