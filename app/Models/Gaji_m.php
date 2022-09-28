@@ -14,12 +14,10 @@
             // $periode = $month_year;
             $data_gaji = DB::table('informasi_gaji')
             ->select('nik', 'nama_karyawan', 
-                'gaji_pokok', 't_jabatan', 't_transport', 't_makan', 't_istri', 't_anak', 'lembur',
-                'komisi', 't_lain', 'ttl_tunjangan', 'ttl_penerimaan', 
-                'tbp_bpjs_kesehatan', 'tbp_bpjs_tk', 'tbp_lain', 'ttl_tbp', 
-                'p_absensi', 'p_keterlambatan', 'p_koperasi', 'p_asuransi_kesehatan', 'p_bpjs_tk', 'p_bpjs_kesehatan',
-                'p_lain', 'ttl_potongan', 
-                'gaji_diterima'
+                'gaji_pokok', 't_gross_up', 't_direksi', 't_area','t_jabatan', 't_transport', 't_makan', 't_lembur', 't_kehadiran', 't_shift', 't_kelebihan_jam_kerja', 't_insentif_libur_nasional', 't_insentif', 't_lainlain', 'total_tunjangan',
+                'pot_admin_payroll', 'pot_absen_bko', 'pot_terlambat', 'pot_lalai', 'pot_bpjs_kesehatan', 'pot_bpjs_pensiun', 'pot_jht', 'pot_lainlain', 'total_potongan',
+                'rapelan', 'benefit_jkk', 'benefit_jkm', 'benefit_jht', 'benefit_jaminan_pensiun', 'benefit_bpjs_kesehatan', 'benefit_lainlain',
+                'take_home_pay'
                 ) 
             ->where('id_karyawan', $id_karyawan)
             ->where('publish', '1')
@@ -36,123 +34,228 @@
                     'bold'  => false
                 );
                 
-                $uang_makan = array(
-                    'judul' => 'Uang Makan',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->t_makan)),
+                $t_gross_up = array(
+                    'judul' => 'Tunjangan Gross Up',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_gross_up)),
                     'bold'  => false
                 );
-                $uang_komisi = array(
-                    'judul' => 'Insentif',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->komisi)),
+                $t_direksi = array(
+                    'judul' => 'Tunjangan Direksi',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_direksi)),
                     'bold'  => false
                 );
 
-                $uang_lembur = array(
-                    'judul' => 'Uang Lembur',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->lembur)),
+                $t_area = array(
+                    'judul' => 'Tunjangan Area',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_area)),
                     'bold'  => false
                 );
                 
-                $tunjangan_jabatan = array(
+                $t_jabatan = array(
                     'judul' => 'Tunjangan Jabatan',
                     'value' => 'Rp. '.strval(number_format($data_gaji->t_jabatan)),
                     'bold'  => false
                 );
 
-                $tunjangan_tranport = array(
+                $t_transport = array(
                     'judul' => 'Tunjangan Tranport',
                     'value' => 'Rp. '.strval(number_format($data_gaji->t_transport)),
                     'bold'  => false
                 );
 
-                $tunjangan_istri = array(
-                    'judul' => 'Tunjangan Istri',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->t_istri)),
+                $t_makan = array(
+                    'judul' => 'Tunjangan Makan',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_makan)),
                     'bold'  => false
                 );
 
-                $tunjangan_anak = array(
-                    'judul' => 'Tunjangan Anak',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->t_anak)),
+                $t_lembur = array(
+                    'judul' => 'Tunjangan Lembur',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_lembur)),
                     'bold'  => false
                 );
 
-                $penerimaan_lain = array(
-                    'judul' => 'Penerimaan Lain',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->t_lain)),
+                $t_kehadiran = array(
+                    'judul' => 'Tunjangan Kehadiran',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_kehadiran)),
                     'bold'  => false
                 );
 
-                $total_penerimaan = array(
-                    'judul' => 'Total Penerimaan',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->ttl_penerimaan)),
+                $t_shift = array(
+                    'judul' => 'Tunjangan Shift',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_shift)),
+                    'bold'  => false
+                );
+
+                $t_kelebihan_jam_kerja = array(
+                    'judul' => 'Tunjangan Kelebihan Jam Kerja',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_kelebihan_jam_kerja)),
                     'bold'  => true
                 );
 
-                $penerimaan = array($gaji_pokok, $uang_makan, $uang_komisi, $uang_lembur, 
-                        $tunjangan_jabatan, $tunjangan_tranport, $tunjangan_istri, $tunjangan_anak,
-                        $penerimaan_lain, $total_penerimaan
+                $t_insentif_libur_nasional = array(
+                    'judul' => 'Insentif Libur Nasional',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_insentif_libur_nasional)),
+                    'bold'  => false
                 );
+
+                $t_insentif = array(
+                    'judul' => 'Insentif',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_insentif)),
+                    'bold'  => false
+                );
+
+                $t_lainlain = array(
+                    'judul' => 'Tunjangan Lain - Lain',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->t_lainlain)),
+                    'bold'  => false
+                );
+
+                $ttl_tunjangan = array(
+                    'judul' => 'Total Tunjangan',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->total_tunjangan)),
+                    'bold'  => true
+                );
+                $penerimaan = [];
+                if($data_gaji->t_gross_up > 0){
+                    array_push($penerimaan, $t_gross_up);
+                }
+                if($data_gaji->t_direksi > 0){
+                    array_push($penerimaan, $t_direksi);
+                }
+                if($data_gaji->t_area > 0){
+                    array_push($penerimaan, $t_area);
+                }
+                if($data_gaji->t_jabatan > 0){
+                    array_push($penerimaan, $t_jabatan);
+                }
+                if($data_gaji->t_transport > 0){
+                    array_push($penerimaan, $t_transport);
+                }
+                if($data_gaji->t_makan > 0){
+                    array_push($penerimaan, $t_makan);
+                }
+                if($data_gaji->t_lembur > 0){
+                    array_push($penerimaan, $t_lembur);
+                }
+                if($data_gaji->t_kehadiran > 0){
+                    array_push($penerimaan, $t_kehadiran);
+                }
+                if($data_gaji->t_shift > 0){
+                    array_push($penerimaan, $t_shift);
+                }
+                if($data_gaji->t_kelebihan_jam_kerja > 0){
+                    array_push($penerimaan, $t_kelebihan_jam_kerja);
+                }
+                if($data_gaji->t_insentif_libur_nasional > 0){
+                    array_push($penerimaan, $t_insentif_libur_nasional);
+                }
+                if($data_gaji->t_insentif > 0){
+                    array_push($penerimaan, $t_insentif);
+                }
+                if($data_gaji->t_lainlain > 0){
+                    array_push($penerimaan, $t_lainlain);
+                }
+                array_push($penerimaan, $ttl_tunjangan);
+
+
+                // $penerimaan = array($gaji_pokok, $t_gross_up, $t_direksi, $t_area, 
+                //         $t_jabatan, $t_transport, $t_makan, $t_lembur, $t_kehadiran, $t_shift,
+                //         $t_kelebihan_jam_kerja, $t_insentif_libur_nasional, $t_insentif, $t_lainlain,
+                //         $ttl_tunjangan
+                // );
                 $penerimaan =  array(
                     'main_judul' => 'Penerimaan',
                     'main_value' => $penerimaan,
-                    'total_value' => $total_penerimaan,
+                    'total_value' => $ttl_tunjangan,
                 );
                 # END PENERIMAAN
 
                 #POTONGAN 
-                $potongan_absen = array(
-                    'judul' => 'Potongan Absen',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->p_absensi)),
+                $pot_admin_payroll = array(
+                    'judul' => 'Potongan Admin Payroll',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->pot_admin_payroll)),
                     'bold'  => false
                 );
                 
-                $potongan_keterlambatan = array(
+                $pot_absen_bko = array(
+                    'judul' => 'Potongan Absen BKO',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->pot_absen_bko)),
+                    'bold'  => false
+                );
+                
+                $pot_terlambat = array(
                     'judul' => 'Potongan Terlambat',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->p_keterlambatan)),
-                    'bold'  => false
-                );
-                
-                $potongan_koperasi = array(
-                    'judul' => 'Potongan Koperasi',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->p_koperasi)),
+                    'value' => 'Rp. '.strval(number_format($data_gaji->pot_terlambat)),
                     'bold'  => false
                 );
 
-                $potongan_bpjs_kesehatan = array(
+                $pot_lalai = array(
+                    'judul' => 'Potongan Kelalaian',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->pot_lalai)),
+                    'bold'  => false
+                );
+
+                $pot_bpjs_kesehatan = array(
                     'judul' => 'Potongan BPJS Kesehatan',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->p_bpjs_kesehatan)),
+                    'value' => 'Rp. '.strval(number_format($data_gaji->pot_bpjs_kesehatan)),
+                    'bold'  => false
+                );
+                
+                $pot_bjps_pensiun = array(
+                    'judul' => 'Potongan BPJS Pensiun',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->pot_bpjs_pensiun)),
                     'bold'  => false
                 );
 
-                $potongan_bpjs_tk = array(
-                    'judul' => 'Potongan BPJS Keternagakerjaan',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->p_bpjs_tk)),
+                $pot_jht = array(
+                    'judul' => 'Potongan JHT',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->pot_jht)),
                     'bold'  => false
                 );
                 
-                $asuransi_kesehatan = array(
-                    'judul' => 'Asuransi Kesehatan',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->p_asuransi_kesehatan)),
-                    'bold'  => false
-                );
-                
-                $potongan_lain = array(
-                    'judul' => 'Potongan Lain',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->p_lain)),
+                $pot_lainlain = array(
+                    'judul' => 'Potongan Lain Lain',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->pot_lainlain)),
                     'bold'  => false
                 );
                 
                 $total_potongan = array(
                     'judul' => 'Total Potongan',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->ttl_potongan)),
+                    'value' => 'Rp. '.strval(number_format($data_gaji->total_potongan)),
                     'bold'  => true
                 );
                 
-                $potongan = [
-                    $potongan_absen, $potongan_keterlambatan, $potongan_koperasi, $potongan_bpjs_kesehatan,
-                    $potongan_bpjs_tk, $asuransi_kesehatan, $potongan_lain, $total_potongan
-                ];
+                $potongan = [];
+                if($data_gaji->pot_admin_payroll > 0){
+                    array_push($potongan, $pot_admin_payroll);
+                }
+                if($data_gaji->pot_absen_bko > 0){
+                    array_push($potongan, $pot_absen_bko);
+                }
+                if($data_gaji->pot_terlambat > 0){
+                    array_push($potongan, $pot_terlambat);
+                }
+                if($data_gaji->pot_lalai > 0){
+                    array_push($potongan, $pot_lalai);
+                }
+                if($data_gaji->pot_bpjs_kesehatan > 0){
+                    array_push($potongan, $pot_bpjs_kesehatan);
+                }
+                if($data_gaji->pot_bpjs_pensiun > 0){
+                    array_push($potongan, $pot_bjps_pensiun);
+                }
+                if($data_gaji->pot_jht > 0){
+                    array_push($potongan, $pot_jht);
+                }
+                if($data_gaji->pot_lainlain > 0){
+                    array_push($potongan, $pot_lainlain);
+                }
+                    array_push($potongan, $total_potongan);
+                // $potongan = [
+                //     $pot_admin_payroll, $pot_absen_bko, $pot_terlambat, $pot_lalai,
+                //     $pot_bpjs_kesehatan, $pot_bjps_pensiun, $pot_jht, $pot_lainlain, $total_potongan
+                // ];
 
                 $potongan = array(
                     'main_judul' => 'Potongan',
@@ -161,56 +264,105 @@
                 );
                 #END POTONGAN
 
-                #TUNJANGAN DIBIAYAI PERUSAHAAN
+                #BENEFIT
 
-                $tbp_bpjs_kesehatan = array(
-                    'judul' => 'Tunjangan BPSJ Kesehatan',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->tbp_bpjs_kesehatan)),
+                $rapelan = array(
+                    'judul' => 'Rapelan',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->rapelan)),
                     'bold'  => false
                 );
                 
-                $tbp_bpjs_tk = array(
-                    'judul' => 'Tunjangan BPJSTK',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->tbp_bpjs_tk)),
+                $benefit_jkk = array(
+                    'judul' => 'Benefit JKK',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->benefit_jkk)),
                     'bold'  => false
                 );
 
-                $tbp_lain = array(
-                    'judul' => 'Tunjangan Lain',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->tbp_lain)),
+                $benefit_jkm = array(
+                    'judul' => 'Benefit JKM',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->benefit_jkm)),
                     'bold'  => false
                 );
 
-                $total_tbp = array(
-                    'judul' => 'Tunjangan Tunjangan Dibiayai Perusahaan',
-                    'value' => 'Rp. '.strval(number_format($data_gaji->ttl_tbp)),
+                $benefit_jht = array(
+                    'judul' => 'Benefit JHT',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->benefit_jht)),
+                    'bold'  => false
+                );
+
+                $benefit_jaminan_pensiunan = array(
+                    'judul' => 'Benefit Jaminan Pensiunan',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->benefit_jaminan_pensiun)),
+                    'bold'  => false
+                );
+
+                $benefit_bpjs_kesehatan = array(
+                    'judul' => 'Benefit BPJS Kesehatan',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->benefit_bpjs_kesehatan)),
+                    'bold'  => false
+                );
+
+                $benefit_lainlain = array(
+                    'judul' => 'Benefit Lain',
+                    'value' => 'Rp. '.strval(number_format($data_gaji->benefit_lainlain)),
+                    'bold'  => false
+                );
+
+                $total_benefit = array(
+                    'judul' => 'Tunjangan Benefit',
+                    'value' => '',
                     'bold'  => true
                 );
 
+                $benefit = [];
+                if($data_gaji->rapelan > 0){
+                    array_push($benefit, $rapelan);
+                }
+                if($data_gaji->benefit_jkk > 0){
+                    array_push($benefit, $benefit_jkk);
+                }
+                if($data_gaji->benefit_jkm > 0){
+                    array_push($benefit, $benefit_jkm);
+                }
+                if($data_gaji->benefit_jht > 0){
+                    array_push($benefit, $benefit_jht);
+                }
+                if($data_gaji->benefit_jaminan_pensiun > 0){
+                    array_push($benefit, $benefit_jaminan_pensiunan);
+                }
+                if($data_gaji->benefit_bpjs_kesehatan > 0){
+                    array_push($benefit, $benefit_bpjs_kesehatan);
+                }
+                if($data_gaji->benefit_lainlain > 0){
+                    array_push($benefit, $benefit_lainlain);
+                }
+               
+                
+                
+                // $benefit = [
+                //     $rapelan, $benefit_jkk, $benefit_jkm, $benefit_jht,
+                //     $benefit_jaminan_pensiunan, $benefit_bpjs_kesehatan, $benefit_lainlain
+                // ];
 
-                $tbp = [
-                    $tbp_bpjs_kesehatan, $tbp_bpjs_tk, $tbp_lain, $total_tbp
-                ];
-
-                $tbp = array(
-                    'main_judul' => 'Tunjangan Dibiayai Perusahaan',
-                    'main_value' => $tbp,
-                    'total_value' => $total_tbp
+                $benefit = array(
+                    'main_judul' => 'Benefit',
+                    'main_value' => $benefit,
+                    'total_value' => $total_benefit
                 );
 
                 #END TBP
 
                 
                 $gaji_diterima = array(
-                    'judul'    => 'Gaji Diterima',
-                    'value'    => 'Rp. '.strval(number_format($data_gaji->gaji_diterima)),
+                    'judul'    => 'Take Home Pay',
+                    'value'    => 'Rp. '.strval(number_format($data_gaji->take_home_pay)),
                     'bold'     => true
                 );
 
                 $data = [
                     $penerimaan,
                     $potongan,
-                    $tbp,
+                    $benefit,
                 ];
 
                 $komponen_lain = [
