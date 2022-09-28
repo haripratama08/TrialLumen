@@ -489,8 +489,8 @@
             $data_lembur = DB::table('lembur_mulai as lm')->select('lm.id_karyawan','lm.tgl_absen', 'dk.nama_lengkap', 'dk.id_cabang', 'mc.nama as nama_cabang', 'dk.id_departemen', 'md.nama as nama_departemen', 'dk.id_jabatan', 'mj.nama as nama_jabatan', 'lm.jam_absen as absen_masuk', 'ls.jam_absen as absen_pulang', 'lm.latitude as lat_masuk', 'ls.latitude as lat_pulang', 'lm.longitude as long_masuk', 'ls.longitude as long_pulang', 'lm.lokasi_absen as lokasi_masuk', 'ls.lokasi_absen as lokasi_pulang', 'lm.keterangan as ket_masuk', 'ls.keterangan as ket_pulang', 'lm.id_company', 'lm.foto as foto_mulai', 'ls.foto as foto_selesai', 'lm.timezone as timezone_mulai', 'lm.gmt as gmt_mulai', 'ls.timezone as timezone_selesai', 'ls.gmt as gmt_selesai')
             ->join('lembur_selesai as ls', 'ls.id_lemmulai', '=', 'lm.id_lemmulai')
             ->join('data_karyawan as dk', 'dk.id_karyawan', '=', 'lm.id_karyawan')
-            ->join('master_cabang as mc', 'mc.id_cabang', 'dk.id_cabang')
-            ->join('master_departemen as md', 'md.id_departemen', '=', 'dk.id_departemen')
+            ->leftJoin('master_cabang as mc', 'mc.id_cabang', 'dk.id_cabang')
+            ->leftJoin('master_departemen as md', 'md.id_departemen', '=', 'dk.id_departemen')
             ->join('master_jabatan as mj', 'mj.id_jabatan', '=', 'dk.id_jabatan')
             ->where('lm.id_lemmulai', $id_lemmulai)->first();
             $data_insert = array(
@@ -499,10 +499,10 @@
                 'tgl_lembur'         => $data_lembur->tgl_absen,
                 'id_karyawan'       => $data_lembur->id_karyawan,
                 'nama_karyawan'     => $data_lembur->nama_lengkap,
-                'id_cabang'         => $data_lembur->id_cabang,
-                'nama_cabang'       => $data_lembur->nama_cabang,
-                'id_departemen'     => $data_lembur->id_departemen,
-                'nama_departemen'   => $data_lembur->nama_departemen,
+                'id_cabang'         => $data_lembur->id_cabang??'',
+                'nama_cabang'       => $data_lembur->nama_cabang??'',
+                'id_departemen'     => $data_lembur->id_departemen??'',
+                'nama_departemen'   => $data_lembur->nama_departemen??'',
                 'id_jabatan'        => $data_lembur->id_jabatan,
                 'nama_jabatan'      => $data_lembur->nama_jabatan,
                 'lembur_mulai'       => $data_lembur->absen_masuk,
