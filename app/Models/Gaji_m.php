@@ -13,7 +13,7 @@
             $periode = $split_periode[1]."-".$split_periode[0];
             // $periode = $month_year;
             $data_gaji = DB::table('informasi_gaji')
-            ->select('nik', 'nama_karyawan', 
+            ->select('nik', 'nama_karyawan', 'id',
                 'gaji_pokok', 't_gross_up', 't_direksi', 't_area','t_jabatan', 't_transport', 't_makan', 't_lembur', 't_kehadiran', 't_shift', 't_kelebihan_jam_kerja', 't_insentif_libur_nasional', 't_insentif', 't_lainlain', 'total_tunjangan',
                 'pot_admin_payroll', 'pot_absen_bko', 'pot_terlambat', 'pot_lalai', 'pot_bpjs_kesehatan', 'pot_bpjs_pensiun', 'pot_jht', 'pot_lainlain', 'total_potongan',
                 'rapelan', 'benefit_jkk', 'benefit_jkm', 'benefit_jht', 'benefit_jaminan_pensiun', 'benefit_bpjs_kesehatan', 'benefit_lainlain',
@@ -370,7 +370,8 @@
                 ];
                 $data = array(
                     'detail_gaji' => $data,
-                    'komponen_lain' => $komponen_lain
+                    'komponen_lain' => $komponen_lain,
+                    'link_download' => 'https://maleoreport.absenku.com/web/slip_gaji/'.md5($data_gaji->id)
                 );
 
             }
