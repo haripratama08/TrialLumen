@@ -714,7 +714,7 @@
             // var_dump($cek_absensi_terakhir);exit;
             // dd(DB::getQueryLog());exi÷t;
             $ganti = $cek_absensi_terakhir != null?$cek_absensi_terakhir->ganti_jadwal:'0';
-            $id_absensi_pulang = $cek_absensi_terakhir->id_absensi_pulang;
+            // $id_absensi_pulang = $cek_absensi_terakhir->id_absensi_pulang;
             if($cek_absensi_terakhir!=null && $cek_absensi_terakhir->jenis_absen == 'shift'){//ADA ABSEN SHIFT
                 // echo $current_time;exit;
                 $kode_shift = $cek_absensi_terakhir->kode_absen;

@@ -203,7 +203,7 @@
                 );
                 
                 $pot_bjps_pensiun = array(
-                    'judul' => 'Potongan BPJS Pensiun',
+                    'judul' => 'Potongan Jaminan Pensiun',
                     'value' => 'Rp. '.strval(number_format($data_gaji->pot_bpjs_pensiun)),
                     'bold'  => false
                 );
