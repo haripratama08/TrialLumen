@@ -129,7 +129,7 @@ use DateTime;
                     }
                 }
                 foreach($list_penerima as $row){
-                    Notifikasi_c::send_fcm($row, 'NOTIFIKASI SOS', User_m::get_data_karyawan($id_karyawan)->nama_lengkap.' melakukan SOS', '/detail_sos_', 0);
+                    Notifikasi_c::send_fcm($row, 'NOTIFIKASI SOS', User_m::get_data_karyawan($id_karyawan)->nama_lengkap.' melakukan SOS', '/detail_sos', $id);
                 }
                 $response = array(
                     'success' => true, 
